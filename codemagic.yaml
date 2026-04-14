@@ -2,6 +2,7 @@ workflows:
   android-release:
     name: Synex Tournament - Android APK
     max_build_duration: 60
+    working_directory: synex_flutter        # ← YE LINE ADD KI
     environment:
       flutter: stable
       java: 17
@@ -14,39 +15,34 @@ workflows:
         
     scripts:
       - name: Get Flutter packages
-        script: |
-          cd synex_flutter
-          flutter pub get
+        script: flutter pub get             # ← cd synex_flutter HATAYA
           
       - name: Check Flutter version
         script: flutter --version
         
       - name: Create google-services.json
         script: |
-          echo $GOOGLE_SERVICES_JSON | base64 --decode > synex_flutter/android/app/google-services.json
+          echo $GOOGLE_SERVICES_JSON | base64 --decode > android/app/google-services.json
           
       - name: Create assets directories
         script: |
-          mkdir -p synex_flutter/assets/images
-          mkdir -p synex_flutter/assets/animations
-          mkdir -p synex_flutter/assets/fonts
+          mkdir -p assets/images
+          mkdir -p assets/animations
+          mkdir -p assets/fonts
           
       - name: Download Orbitron fonts
         script: |
-          cd synex_flutter/assets/fonts
+          cd assets/fonts
           curl -L "https://fonts.gstatic.com/s/orbitron/v31/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyGy6BoWgz.woff2" -o Orbitron-Regular.ttf || true
           curl -L "https://fonts.gstatic.com/s/orbitron/v31/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyKS6BoWgz.woff2" -o Orbitron-Bold.ttf || true
           curl -L "https://fonts.gstatic.com/s/orbitron/v31/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyJS-BoWgz.woff2" -o Orbitron-Black.ttf || true
-          echo "Fonts downloaded (or skipped)"
+          echo "Fonts downloaded"
           
       - name: Flutter analyze
-        script: |
-          cd synex_flutter
-          flutter analyze --no-fatal-infos || true
+        script: flutter analyze --no-fatal-infos || true
           
       - name: Build Release APK
         script: |
-          cd synex_flutter
           flutter build apk \
             --release \
             --no-tree-shake-icons \
@@ -54,8 +50,8 @@ workflows:
             --build-number=$(($(date +%s)))
             
     artifacts:
-      - synex_flutter/build/app/outputs/flutter-apk/app-release.apk
-      - synex_flutter/build/app/outputs/flutter-apk/app-release.apk.sha1
+      - build/app/outputs/flutter-apk/app-release.apk
+      - build/app/outputs/flutter-apk/app-release.apk.sha1
       
     publishing:
       email:
