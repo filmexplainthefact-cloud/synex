@@ -1,0 +1,66 @@
+workflows:
+  android-release:
+    name: Synex Tournament - Android APK
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      java: 17
+      android_signing:
+        - synex_keystore
+      groups:
+        - firebase_credentials
+      vars:
+        PACKAGE_NAME: "com.synex.synex_live"
+        
+    scripts:
+      - name: Get Flutter packages
+        script: |
+          cd synex_flutter
+          flutter pub get
+          
+      - name: Check Flutter version
+        script: flutter --version
+        
+      - name: Create google-services.json
+        script: |
+          echo $GOOGLE_SERVICES_JSON | base64 --decode > synex_flutter/android/app/google-services.json
+          
+      - name: Create assets directories
+        script: |
+          mkdir -p synex_flutter/assets/images
+          mkdir -p synex_flutter/assets/animations
+          mkdir -p synex_flutter/assets/fonts
+          
+      - name: Download Orbitron fonts
+        script: |
+          cd synex_flutter/assets/fonts
+          curl -L "https://fonts.gstatic.com/s/orbitron/v31/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyGy6BoWgz.woff2" -o Orbitron-Regular.ttf || true
+          curl -L "https://fonts.gstatic.com/s/orbitron/v31/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyKS6BoWgz.woff2" -o Orbitron-Bold.ttf || true
+          curl -L "https://fonts.gstatic.com/s/orbitron/v31/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyJS-BoWgz.woff2" -o Orbitron-Black.ttf || true
+          echo "Fonts downloaded (or skipped)"
+          
+      - name: Flutter analyze
+        script: |
+          cd synex_flutter
+          flutter analyze --no-fatal-infos || true
+          
+      - name: Build Release APK
+        script: |
+          cd synex_flutter
+          flutter build apk \
+            --release \
+            --no-tree-shake-icons \
+            --build-name=1.0.0 \
+            --build-number=$(($(date +%s)))
+            
+    artifacts:
+      - synex_flutter/build/app/outputs/flutter-apk/app-release.apk
+      - synex_flutter/build/app/outputs/flutter-apk/app-release.apk.sha1
+      
+    publishing:
+      email:
+        recipients:
+          - filmexplainthefact@gmail.com
+        notify:
+          success: true
+          failure: true
