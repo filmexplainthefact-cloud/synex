@@ -6,8 +6,6 @@ workflows:
     environment:
       flutter: 3.22.0
       java: 17
-      groups:
-        - firebase_credentials
     scripts:
       - name: Flutter pub get
         script: |
@@ -24,7 +22,48 @@ workflows:
 
       - name: Add google-services.json
         script: |
-          echo $GOOGLE_SERVICES_JSON | base64 --decode > android/app/google-services.json
+          cat > android/app/google-services.json << 'EOF'
+          {
+            "project_info": {
+              "project_number": "93914740482",
+              "firebase_url": "https://dgsell-default-rtdb.firebaseio.com",
+              "project_id": "dgsell",
+              "storage_bucket": "dgsell.firebasestorage.app"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:93914740482:android:d41f8492e8db7f071e741b",
+                  "android_client_info": {
+                    "package_name": "com.synex.synex_live"
+                  }
+                },
+                "oauth_client": [
+                  {
+                    "client_id": "93914740482-bovs2ucih60opm1k324pf2deqgmi2pfq.apps.googleusercontent.com",
+                    "client_type": 3
+                  }
+                ],
+                "api_key": [
+                  {
+                    "current_key": "AIzaSyDjN72zb90c8GzasTiFx-wZHKk_XbL2XPw"
+                  }
+                ],
+                "services": {
+                  "appinvite_service": {
+                    "other_platform_oauth_client": [
+                      {
+                        "client_id": "93914740482-bovs2ucih60opm1k324pf2deqgmi2pfq.apps.googleusercontent.com",
+                        "client_type": 3
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            "configuration_version": "1"
+          }
+          EOF
 
       - name: Build APK
         script: flutter build apk --release --no-tree-shake-icons
