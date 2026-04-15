@@ -1,58 +1,18 @@
 workflows:
   android-release:
-    name: Synex Tournament - Android APK
+    name: Synex APK
     max_build_duration: 60
-    working_directory: synex_flutter        # ← YE LINE ADD KI
+    working_directory: synex_flutter
     environment:
       flutter: stable
       java: 17
-      android_signing:
-        - synex_keystore
-      groups:
-        - firebase_credentials
-      vars:
-        PACKAGE_NAME: "com.synex.synex_live"
-        
     scripts:
-      - name: Get Flutter packages
-        script: flutter pub get             # ← cd synex_flutter HATAYA
-          
-      - name: Check Flutter version
-        script: flutter --version
-        
-      - name: Create google-services.json
-        script: |
-          echo $GOOGLE_SERVICES_JSON | base64 --decode > android/app/google-services.json
-          
-      - name: Create assets directories
-        script: |
-          mkdir -p assets/images
-          mkdir -p assets/animations
-          mkdir -p assets/fonts
-          
-      - name: Download Orbitron fonts
-        script: |
-          cd assets/fonts
-          curl -L "https://fonts.gstatic.com/s/orbitron/v31/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyGy6BoWgz.woff2" -o Orbitron-Regular.ttf || true
-          curl -L "https://fonts.gstatic.com/s/orbitron/v31/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyKS6BoWgz.woff2" -o Orbitron-Bold.ttf || true
-          curl -L "https://fonts.gstatic.com/s/orbitron/v31/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyJS-BoWgz.woff2" -o Orbitron-Black.ttf || true
-          echo "Fonts downloaded"
-          
-      - name: Flutter analyze
-        script: flutter analyze --no-fatal-infos || true
-          
-      - name: Build Release APK
-        script: |
-          flutter build apk \
-            --release \
-            --no-tree-shake-icons \
-            --build-name=1.0.0 \
-            --build-number=$(($(date +%s)))
-            
+      - name: Flutter pub get
+        script: flutter pub get
+      - name: Build APK
+        script: flutter build apk --release --no-tree-shake-icons
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
-      - build/app/outputs/flutter-apk/app-release.apk.sha1
-      
     publishing:
       email:
         recipients:
