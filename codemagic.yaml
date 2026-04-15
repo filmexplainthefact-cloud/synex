@@ -12,8 +12,18 @@ workflows:
           echo "flutter.sdk=$(which flutter | xargs dirname | xargs dirname)" > android/local.properties
           echo "sdk.dir=$ANDROID_SDK_ROOT" >> android/local.properties
           flutter pub get
+
+      - name: Download Fonts
+        script: |
+          mkdir -p assets/fonts
+          curl -L "https://github.com/google/fonts/raw/main/ofl/orbitron/Orbitron%5Bwght%5D.ttf" -o assets/fonts/Orbitron-Regular.ttf
+          cp assets/fonts/Orbitron-Regular.ttf assets/fonts/Orbitron-Bold.ttf
+          cp assets/fonts/Orbitron-Regular.ttf assets/fonts/Orbitron-Black.ttf
+          echo "Fonts ready!"
+
       - name: Build APK
         script: flutter build apk --release --no-tree-shake-icons
+
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
     publishing:
