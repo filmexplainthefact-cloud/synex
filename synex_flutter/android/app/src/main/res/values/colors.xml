@@ -1,4 +1,6 @@
-This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-<color name="notification_color">#00E5FF</color>
+    <color name="colorPrimary">#00FF00</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#00E5FF</color>
 </resources>
