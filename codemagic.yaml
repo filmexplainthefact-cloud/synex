@@ -4,7 +4,7 @@ workflows:
     max_build_duration: 60
     working_directory: synex_flutter
     environment:
-      flutter: stable
+      flutter: 3.19.6    # ← STABLE OLD VERSION
       java: 17
     scripts:
       - name: Flutter pub get
