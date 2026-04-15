@@ -6,6 +6,8 @@ workflows:
     environment:
       flutter: 3.22.0
       java: 17
+      groups:
+        - firebase_credentials
     scripts:
       - name: Flutter pub get
         script: |
@@ -19,7 +21,10 @@ workflows:
           curl -L "https://github.com/google/fonts/raw/main/ofl/orbitron/Orbitron%5Bwght%5D.ttf" -o assets/fonts/Orbitron-Regular.ttf
           cp assets/fonts/Orbitron-Regular.ttf assets/fonts/Orbitron-Bold.ttf
           cp assets/fonts/Orbitron-Regular.ttf assets/fonts/Orbitron-Black.ttf
-          echo "Fonts ready!"
+
+      - name: Add google-services.json
+        script: |
+          echo $GOOGLE_SERVICES_JSON | base64 --decode > android/app/google-services.json
 
       - name: Build APK
         script: flutter build apk --release --no-tree-shake-icons
